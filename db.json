@@ -1,6 +1,7 @@
 {
   "products": [
     {
+      "category": "digital",
       "id": "52",
       "price": 25000,
       "old_price": 25000,
@@ -14,6 +15,7 @@
       ]
     },
     {
+      "category": "digital",
       "id": "53",
       "price": 5599,
       "old_price": 10230,
@@ -29,6 +31,7 @@
       ]
     },
     {
+      "category": "digital",
       "id": "54",
       "price": 11499,
       "old_price": 12499,
@@ -42,6 +45,7 @@
       ]
     },
     {
+      "category": "digital",
       "id": "55",
       "price": 44500,
       "old_price": 44500,
@@ -57,6 +61,7 @@
       ]
     },
     {
+      "category": "digital",
       "id": "56",
       "price": 32860,
       "old_price": 35000,
@@ -74,6 +79,7 @@
       ]
     },
     {
+      "category": "digital",
       "id": "57",
       "price": 530,
       "old_price": 530,
@@ -87,6 +93,7 @@
       ]
     },
     {
+      "category": "digital",
       "id": "58",
       "price": 1083,
       "old_price": 1083,
@@ -100,6 +107,7 @@
       ]
     },
     {
+      "category": "other",
       "id": "80",
       "price": 45,
       "old_price": 45,
@@ -113,6 +121,7 @@
       ]
     },
     {
+      "category": "other",
       "id": "81",
       "price": 50.25,
       "old_price": 70,
@@ -128,6 +137,7 @@
       ]
     },
     {
+      "category": "digital",
       "id": "82",
       "price": 3075.26,
       "old_price": 3075.26,
@@ -146,6 +156,7 @@
       ]
     },
     {
+      "category": "digital",
       "id": "83",
       "price": 444,
       "old_price": 656,
@@ -160,6 +171,7 @@
       ]
     },
     {
+      "category": "clothes",
       "id": "84",
       "price": 1606.5,
       "old_price": 1606.5,
@@ -177,6 +189,7 @@
       ]
     },
     {
+      "category": "clothes",
       "id": "85",
       "price": 1085,
       "old_price": 1085,
@@ -190,6 +203,7 @@
       ]
     },
     {
+      "category": "digital",
       "id": "86",
       "price": 1596.92,
       "old_price": 2659.05,
@@ -204,6 +218,7 @@
       ]
     },
     {
+      "category": "digital",
       "id": "87",
       "price": 499,
       "old_price": 999,
@@ -222,6 +237,7 @@
       ]
     },
     {
+      "category": "clothes",
       "id": "88",
       "price": 160.64,
       "old_price": 160.64,
@@ -242,6 +258,7 @@
       ]
     },
     {
+      "category": "digital",
       "id": "89",
       "price": 400,
       "old_price": 400,
@@ -259,6 +276,7 @@
       ]
     },
     {
+      "category": "clothes",
       "id": "90",
       "price": 110,
       "old_price": 160,
@@ -271,6 +289,7 @@
       ]
     },
     {
+      "category": "clothes",
       "id": "91",
       "price": 404,
       "old_price": 692,
@@ -286,6 +305,7 @@
       ]
     },
     {
+      "category": "clothes",
       "id": "92",
       "price": 225,
       "old_price": 475,
@@ -301,6 +321,7 @@
       ]
     },
     {
+      "category": "clothes",
       "id": "f788",
       "name": "product 2",
       "price": 1999,
@@ -310,6 +331,7 @@
       "image": "https://res.cloudinary.com/dxxkqw3bf/image/upload/v1740393505/suit_nxghnq.jpg"
     },
     {
+      "category": "clothes",
       "id": "8c68",
       "name": "T-Shirt",
       "price": 799,
@@ -319,6 +341,7 @@
       "image": "https://res.cloudinary.com/dxxkqw3bf/image/upload/v1740394001/product2_b8mvgj.jpg"
     },
     {
+      "category": "clothes",
       "id": "96f0",
       "name": "men pants",
       "price": 899,
@@ -328,6 +351,7 @@
       "image": "https://res.cloudinary.com/dxxkqw3bf/image/upload/v1740395138/product2_t0wgtk.jpg"
     },
     {
+      "category": "clothes",
       "id": "0800",
       "name": "jacket",
       "price": 5000,
