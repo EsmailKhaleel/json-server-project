@@ -13,13 +13,13 @@ server.use(express.json());
 
 // Helper function to read the database file
 const readDB = () => {
-  const data = fs.readFileSync('../db.json', 'utf8');
+  const data = fs.readFileSync(require('path').join(__dirname, '../db.json'), 'utf8');
   return JSON.parse(data);
 };
 
 // Helper function to write to the database file
 const writeDB = (data) => {
-  fs.writeFileSync('../db.json', JSON.stringify(data, null, 2));
+  fs.writeFileSync(require('path').join(__dirname, '../db.json'), JSON.stringify(data, null, 2));
 };
 
 // Products Routes
