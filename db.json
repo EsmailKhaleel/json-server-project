@@ -39,8 +39,8 @@
       "discount": 10,
       "description": "stylish jacket ",
       "image": "https://res.cloudinary.com/dxxkqw3bf/image/upload/v1740403407/download_ffrm9v.webp"
-    }
-    , {
+    },
+    {
       "category": "furniture",
       "id": "93",
       "price": 1900,
@@ -140,7 +140,8 @@
       "images": [
         "https://cdn.dummyjson.com/products/images/groceries/Beef%20Steak/1.png"
       ]
-    }, {
+    },
+    {
       "category": "groceries",
       "id": "100",
       "price": 9,
@@ -244,7 +245,8 @@
       "images": [
         "https://cdn.dummyjson.com/products/images/groceries/Green%20Bell%20Pepper/1.png"
       ]
-    },  {
+    },
+    {
       "category": "groceries",
       "id": "108",
       "price": 1,
@@ -350,7 +352,8 @@
       "images": [
         "https://cdn.dummyjson.com/products/images/groceries/Mulberry/1.png"
       ]
-    },  {
+    },
+    {
       "category": "beauty",
       "id": "116",
       "price": 9.99,
@@ -377,7 +380,8 @@
         "https://cdn.dummyjson.com/products/images/beauty/Eyeshadow%20Palette%20with%20Mirror/1.png",
         "https://cdn.dummyjson.com/products/images/beauty/Eyeshadow%20Palette%20with%20Mirror/thumbnail.png"
       ]
-    }, {
+    },
+    {
       "category": "fragrances",
       "id": "118",
       "price": 49.99,
@@ -406,11 +410,12 @@
         "https://cdn.dummyjson.com/products/images/fragrances/Chanel%20Coco%20Noir%20Eau%20De/2.png",
         "https://cdn.dummyjson.com/products/images/fragrances/Chanel%20Coco%20Noir%20Eau%20De/3.png"
       ]
-    },{
+    },
+    {
       "category": "beauty",
       "id": "120",
       "price": 14.99,
-      "old_price": 18.30,
+      "old_price": 18.3,
       "discount": 18,
       "image": "https://cdn.dummyjson.com/products/images/beauty/Powder%20Canister/thumbnail.png",
       "name": "Powder Canister",
@@ -447,7 +452,8 @@
         "https://cdn.dummyjson.com/products/images/beauty/Red%20Nail%20Polish/1.png",
         "https://cdn.dummyjson.com/products/images/beauty/Red%20Nail%20Polish/thumbnail.png"
       ]
-    }, {
+    },
+    {
       "category": "fragrances",
       "id": "123",
       "price": 89.99,
@@ -491,7 +497,8 @@
         "https://cdn.dummyjson.com/products/images/fragrances/Gucci%20Bloom%20Eau%20de/2.png",
         "https://cdn.dummyjson.com/products/images/fragrances/Gucci%20Bloom%20Eau%20de/3.png"
       ]
-    },{
+    },
+    {
       "category": "furniture",
       "id": "126",
       "price": 300,
@@ -506,6 +513,21 @@
         "https://cdn.dummyjson.com/products/images/furniture/Bedside%20Table%20African%20Cherry/2.png",
         "https://cdn.dummyjson.com/products/images/furniture/Bedside%20Table%20African%20Cherry/3.png"
       ]
+    },
+    {
+      "category": "digital",
+      "name": "Iphone 16 Pro Max",
+      "price": 59855,
+      "old_price": 65555,
+      "discount": 12,
+      "description": "New Apple iPhone 16 Pro Max 6.9 Real Dual Sim OLED A 18Pro 48MP Phone By FedEx",
+      "image": "https://i.ebayimg.com/images/g/ugIAAOSwVVpm4Ad3/s-l1600.webp",
+      "images": [
+        "https://i.ebayimg.com/images/g/crIAAOSwWOJm4A3M/s-l1600.webp",
+        "https://i.ebayimg.com/images/g/ZIsAAOSwm1Rm4AfY/s-l1600.webp",
+        "https://i.ebayimg.com/images/g/rMYAAOSwUUVm4AeF/s-l1600.webp"
+      ],
+      "id": "xw8264m"
     }
   ]
 }
