@@ -1,0 +1,172 @@
+{
+  "reviews": [
+    {
+      "id": "rev1",
+      "productId": "f788",
+      "rating": 5,
+      "comment": "This suit is absolutely perfect! The fit is impeccable and the quality is outstanding. Worth every penny!",
+      "userName": "Sarah Johnson",
+      "createdAt": "2024-03-10T14:30:00.000Z"
+    },
+    {
+      "id": "rev2",
+      "productId": "8c68",
+      "rating": 4,
+      "comment": "Great quality t-shirt, very comfortable and the blue color is exactly as shown. Good value for money.",
+      "userName": "Mike Thompson",
+      "createdAt": "2024-03-09T10:15:00.000Z"
+    },
+    {
+      "id": "rev3",
+      "productId": "96f0",
+      "rating": 5,
+      "comment": "These pants are incredibly comfortable and stylish. Perfect fit and great quality material.",
+      "userName": "Alex Chen",
+      "createdAt": "2024-03-11T09:45:00.000Z"
+    },
+    {
+      "id": "rev4",
+      "productId": "0800",
+      "rating": 5,
+      "comment": "The jacket is amazing! Warm, stylish, and the quality is top-notch. The discount made it an even better deal.",
+      "userName": "Emma Wilson",
+      "createdAt": "2024-03-08T16:20:00.000Z"
+    },
+    {
+      "id": "rev5",
+      "productId": "93",
+      "rating": 5,
+      "comment": "The Annibale Colombo Bed is absolutely stunning! The craftsmanship is exceptional and it's incredibly comfortable.",
+      "userName": "David Brown",
+      "createdAt": "2024-03-07T11:30:00.000Z"
+    },
+    {
+      "id": "rev6",
+      "productId": "94",
+      "rating": 4,
+      "comment": "Beautiful sofa, very comfortable. The upholstery is high quality and the design is elegant.",
+      "userName": "Lisa Anderson",
+      "createdAt": "2024-03-06T13:45:00.000Z"
+    },
+    {
+      "id": "rev7",
+      "productId": "95",
+      "rating": 5,
+      "comment": "This bedside table is perfect! The African Cherry wood is beautiful and it's very well made.",
+      "userName": "James Wilson",
+      "createdAt": "2024-03-05T15:10:00.000Z"
+    },
+    {
+      "id": "rev8",
+      "productId": "98",
+      "rating": 5,
+      "comment": "Fresh and delicious apples! Perfect for snacking and baking.",
+      "userName": "Rachel Green",
+      "createdAt": "2024-03-04T17:25:00.000Z"
+    },
+    {
+      "id": "rev9",
+      "productId": "99",
+      "rating": 5,
+      "comment": "Excellent quality beef steak! Very tender and flavorful.",
+      "userName": "Tom Harris",
+      "createdAt": "2024-03-03T10:50:00.000Z"
+    },
+    {
+      "id": "rev10",
+      "productId": "116",
+      "rating": 5,
+      "comment": "This mascara is amazing! Gives incredible volume and length without clumping.",
+      "userName": "Sophie Martin",
+      "createdAt": "2024-03-02T14:15:00.000Z"
+    },
+    {
+      "id": "rev11",
+      "productId": "118",
+      "rating": 5,
+      "comment": "CK One is a classic! Fresh, clean scent that's perfect for everyday wear.",
+      "userName": "John Davis",
+      "createdAt": "2024-03-01T09:30:00.000Z"
+    },
+    {
+      "id": "rev12",
+      "productId": "119",
+      "rating": 5,
+      "comment": "Chanel Coco Noir is absolutely divine! Elegant and sophisticated scent.",
+      "userName": "Maria Garcia",
+      "createdAt": "2024-02-29T16:45:00.000Z"
+    },
+    {
+      "id": "rev13",
+      "productId": "xw8264m",
+      "rating": 5,
+      "comment": "The iPhone 16 Pro Max is incredible! The camera system is revolutionary and the battery life is outstanding.",
+      "userName": "Tech Enthusiast",
+      "createdAt": "2024-02-28T11:20:00.000Z"
+    },
+    {
+      "id": "rev14",
+      "productId": "96",
+      "rating": 4,
+      "comment": "Very comfortable conference chair. Great for long meetings.",
+      "userName": "Office Manager",
+      "createdAt": "2024-02-27T14:10:00.000Z"
+    },
+    {
+      "id": "rev15",
+      "productId": "97",
+      "rating": 5,
+      "comment": "Beautiful bathroom sink! The wooden countertop adds a unique touch to our bathroom.",
+      "userName": "Home Designer",
+      "createdAt": "2024-02-26T10:30:00.000Z"
+    },
+    {
+      "id": "rev16",
+      "productId": "100",
+      "rating": 4,
+      "comment": "My cat loves this food! Good quality and reasonable price.",
+      "userName": "Cat Lover",
+      "createdAt": "2024-02-25T15:40:00.000Z"
+    },
+    {
+      "id": "rev17",
+      "productId": "101",
+      "rating": 5,
+      "comment": "Fresh and high-quality chicken meat. Perfect for our family meals.",
+      "userName": "Home Chef",
+      "createdAt": "2024-02-24T12:15:00.000Z"
+    },
+    {
+      "id": "rev18",
+      "productId": "117",
+      "rating": 5,
+      "comment": "Beautiful eyeshadow palette! The colors are pigmented and blend beautifully.",
+      "userName": "Makeup Artist",
+      "createdAt": "2024-02-23T13:50:00.000Z"
+    },
+    {
+      "id": "rev19",
+      "productId": "120",
+      "rating": 4,
+      "comment": "Great setting powder! Keeps my makeup in place all day.",
+      "userName": "Beauty Blogger",
+      "createdAt": "2024-02-22T09:25:00.000Z"
+    },
+    {
+      "id": "rev20",
+      "productId": "121",
+      "rating": 5,
+      "comment": "Perfect red lipstick! Long-lasting and doesn't dry out my lips.",
+      "userName": "Fashionista",
+      "createdAt": "2024-02-21T16:30:00.000Z"
+    },
+    {
+      "id": "sawsw25",
+      "productId": "94",
+      "rating": 3,
+      "comment": "Great, cheap and comfortable with amazing material.",
+      "userName": "Esmail Khaleel",
+      "createdAt": "2025-06-11T17:19:59.830Z"
+    }
+  ]
+}
