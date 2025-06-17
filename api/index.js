@@ -45,7 +45,7 @@ app.use(express.static('public'));
 
 // Welcome page at root endpoint
 app.get('/', (req, res) => {
-  res.sendFile('index.html', { root: './public' });
+  res.sendFile('../public/index.html', { root: './public' });
 });
 
 
