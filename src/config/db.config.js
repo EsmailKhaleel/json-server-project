@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
 
 // Cache the database connection
 let cachedConnection = null;
@@ -11,6 +12,7 @@ const connectDB = async () => {
 
   try {
     const mongodbURI = process.env.MONGODB_URI;
+    console.log(`Connecting to MongoDB at ${mongodbURI}`);
     
     const conn = await mongoose.connect(mongodbURI, {
       useNewUrlParser: true,
@@ -29,6 +31,7 @@ const connectDB = async () => {
     throw error; // Let the error be handled by the error middleware
   }
 };
+
 
 // Handle connection errors after initial connection
 mongoose.connection.on('error', err => {
