@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce API Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #64748b;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --background: #f8fafc;
+            --text: #0f172a;
+        }        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+            background: var(--background);
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+        }
+
+        .header h1 {
+            color: var(--primary);
+            margin: 0 0 0.25rem 0;
+            font-size: 1.5rem;
+        }
+
+        .header p {
+            color: var(--secondary);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .endpoint-section {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+        }
+
+        .endpoint-section h2 {
+            color: var(--text);
+            border-bottom: 1px solid var(--background);
+            padding-bottom: 0.25rem;
+            margin: 0 0 0.75rem 0;
+            font-size: 1.1rem;
+        }
+
+        .endpoint {
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            background: var(--background);
+        }
+
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .method {
+            padding: 0.15rem 0.5rem;
+            border-radius: 3px;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }        .get { background: #dbeafe; color: #1e40af; }
+        .post { background: #dcfce7; color: #166534; }
+        .put { background: #fef3c7; color: #92400e; }
+        .delete { background: #fee2e2; color: #991b1b; }
+
+        .path {
+            font-family: 'SF Mono', Consolas, monospace;
+            font-size: 0.8rem;
+            color: var(--text);
+        }
+
+        .description {
+            font-size: 0.8rem;
+            margin: 0;
+            color: var(--secondary);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding: 2rem;
+            color: var(--secondary);
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #ecfdf5;
+            color: #059669;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status::before {
+            content: "";
+            width: 0.5rem;
+            height: 0.5rem;
+            background: currentColor;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>E-Commerce API Documentation</h1>
+            <p>Complete API documentation for the E-commerce platform</p>
+            <div class="status">Server is running</div>
+        </header>
+
+        <section class="endpoint-section">
+            <h2>Authentication Endpoints</h2>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method post">POST</span>
+                    <span class="path">/api/auth/register</span>
+                </div>
+                <p class="description">Register a new user</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method post">POST</span>
+                    <span class="path">/api/auth/login</span>
+                </div>
+                <p class="description">Login user</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/auth/me</span>
+                </div>
+                <p class="description">Get current user profile</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method put">PUT</span>
+                    <span class="path">/api/auth/updatedetails</span>
+                </div>
+                <p class="description">Update user details</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method put">PUT</span>
+                    <span class="path">/api/auth/updatepassword</span>
+                </div>
+                <p class="description">Update user password</p>
+            </div>
+        </section>
+
+        <section class="endpoint-section">
+            <h2>Cart Endpoints</h2>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/auth/cart</span>
+                </div>
+                <p class="description">Get user's cart</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method post">POST</span>
+                    <span class="path">/api/auth/cart</span>
+                </div>
+                <p class="description">Add item to cart</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method delete">DELETE</span>
+                    <span class="path">/api/auth/cart/:productId</span>
+                </div>
+                <p class="description">Remove item from cart</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method delete">DELETE</span>
+                    <span class="path">/api/auth/cart</span>
+                </div>
+                <p class="description">Clear cart</p>
+            </div>
+        </section>
+
+        <section class="endpoint-section">
+            <h2>Wishlist Endpoints</h2>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/auth/wishlist</span>
+                </div>
+                <p class="description">Get user's wishlist</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method post">POST</span>
+                    <span class="path">/api/auth/wishlist</span>
+                </div>
+                <p class="description">Toggle item in wishlist</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method delete">DELETE</span>
+                    <span class="path">/api/auth/wishlist</span>
+                </div>
+                <p class="description">Clear wishlist</p>
+            </div>
+        </section>
+
+        <section class="endpoint-section">
+            <h2>Product Endpoints</h2>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/products</span>
+                </div>
+                <p class="description">Get all products</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/products/:id</span>
+                </div>
+                <p class="description">Get single product</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method post">POST</span>
+                    <span class="path">/api/products</span>
+                </div>
+                <p class="description">Create product</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method put">PUT</span>
+                    <span class="path">/api/products/:id</span>
+                </div>
+                <p class="description">Update product</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method delete">DELETE</span>
+                    <span class="path">/api/products/:id</span>
+                </div>
+                <p class="description">Delete product</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/products/categories</span>
+                </div>
+                <p class="description">Get product categories</p>
+            </div>
+        </section>
+
+        <section class="endpoint-section">
+            <h2>Review Endpoints</h2>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/reviews</span>
+                </div>
+                <p class="description">Get all reviews</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/reviews?productId=ID</span>
+                </div>
+                <p class="description">Get product reviews</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/reviews/product/:productId/rating</span>
+                </div>
+                <p class="description">Get product rating</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method post">POST</span>
+                    <span class="path">/api/reviews</span>
+                </div>
+                <p class="description">Create review</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method put">PUT</span>
+                    <span class="path">/api/reviews/:id</span>
+                </div>
+                <p class="description">Update review</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method delete">DELETE</span>
+                    <span class="path">/api/reviews/:id</span>
+                </div>
+                <p class="description">Delete review</p>
+            </div>        </section>
+
+        <section class="endpoint-section">
+            <h2>Order Endpoints</h2>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/orders</span>
+                </div>
+                <p class="description">Get all orders</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/orders/:id</span>
+                </div>
+                <p class="description">Get single order</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method put">PUT</span>
+                    <span class="path">/api/orders/:id</span>
+                </div>
+                <p class="description">Update order status</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method delete">DELETE</span>
+                    <span class="path">/api/orders/:id</span>
+                </div>
+                <p class="description">Cancel order</p>
+            </div>
+        </section>
+
+        <section class="endpoint-section">
+            <h2>Payment Endpoints</h2>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method post">POST</span>
+                    <span class="path">/api/stripe/create-checkout-session</span>
+                </div>
+                <p class="description">Create payment session</p>
+            </div>
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method post">POST</span>
+                    <span class="path">/api/webhook</span>
+                </div>
+                <p class="description">Stripe webhook endpoint</p>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p>Made with ❤️ by Esmail •</p>
+            <p>Version 1.0.0</p>
+        </footer>
+    </div>
+</body>
+</html>

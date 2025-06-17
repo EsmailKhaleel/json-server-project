@@ -40,6 +40,15 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), require('../
 // Body parser middleware - after Stripe webhook
 app.use(express.json());
 
+// Serve static files from public directory
+app.use(express.static('public'));
+
+// Welcome page at root endpoint
+app.get('/', (req, res) => {
+  res.sendFile('index.html', { root: './public' });
+});
+
+
 // Health check endpoint that doesn't require DB connection
 app.get('/api/health', (req, res) => {
   res.json({ status: true, message: 'Server is running' });

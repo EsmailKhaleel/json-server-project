@@ -14,13 +14,7 @@ const connectDB = async () => {
     const mongodbURI = process.env.MONGODB_URI;
     console.log(`Connecting to MongoDB at ${mongodbURI}`);
     
-    const conn = await mongoose.connect(mongodbURI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      bufferCommands: false, // Disable mongoose buffering
-      serverSelectionTimeoutMS: 10000, // Keep trying to send operations for 10 seconds
-      socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
-    });
+    const conn = await mongoose.connect(mongodbURI);
 
     // Cache the connection
     cachedConnection = conn;
