@@ -4,7 +4,7 @@ const getAllProducts = async (req, res, next) => {
   try {
     const { category, _sort, _order, q, page, limit, minPrice, maxPrice } = req.query;
     
-    // Build query
+    // Build query with lean() for better performance
     const query = {};
     
     // Handle search query
@@ -35,13 +35,19 @@ const getAllProducts = async (req, res, next) => {
     const limitNumber = parseInt(limit) || 10;
     const skip = (pageNumber - 1) * limitNumber;
 
-    // Execute query with pagination
+    // Set timeout for the query
+    const queryTimeout = 5000; // 5 seconds
+
+    // Execute query with pagination and timeout
     const [products, total] = await Promise.all([
       Product.find(query)
+        .lean() // Use lean() for better performance
         .sort(sortOptions)
         .skip(skip)
-        .limit(limitNumber),
+        .limit(limitNumber)
+        .maxTimeMS(queryTimeout), // Add timeout
       Product.countDocuments(query)
+        .maxTimeMS(queryTimeout) // Add timeout
     ]);
 
     res.json({
