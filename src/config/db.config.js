@@ -9,19 +9,29 @@ const connectDB = async () => {
     console.log('Using cached database connection');
     return cachedConnection;
   }
-
   try {
     const mongodbURI = process.env.MONGODB_URI;
-    console.log(`Connecting to MongoDB at ${mongodbURI}`);
+    if (!mongodbURI) {
+      throw new Error('MONGODB_URI environment variable is not set');
+    }
+    console.log('Attempting to connect to MongoDB...');
+    console.log(`Connection string starts with: ${mongodbURI.substring(0, 20)}...`);
     
-    const conn = await mongoose.connect(mongodbURI);
+    const conn = await mongoose.connect(mongodbURI, {
+      serverSelectionTimeoutMS: 5000, // Timeout after 5 seconds
+      socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+    });
 
     // Cache the connection
     cachedConnection = conn;
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    console.log(`MongoDB Connected Successfully to: ${conn.connection.host}`);
     return conn;
   } catch (error) {
-    console.error(`MongoDB connection error: ${error.message}`);
+    console.error('Detailed MongoDB connection error:');
+    console.error(error.stack);
+    console.error('Environment check:');
+    console.error(`NODE_ENV: ${process.env.NODE_ENV}`);
+    console.error(`MONGODB_URI exists: ${Boolean(process.env.MONGODB_URI)}`);
     throw error; // Let the error be handled by the error middleware
   }
 };

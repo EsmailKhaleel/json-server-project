@@ -1,7 +1,20 @@
 const { errorResponse } = require('../utils/response.utils');
 
 const errorHandler = (err, req, res, next) => {
-  console.error(err.stack);
+  console.error('Detailed Error Information:');
+  console.error('Error Name:', err.name);
+  console.error('Error Message:', err.message);
+  console.error('Error Stack:', err.stack);
+  console.error('Request URL:', req.originalUrl);
+  console.error('Request Method:', req.method);
+
+  // Mongoose connection error
+  if (err.name === 'MongooseError' || err.name === 'MongoServerError') {
+    console.error('MongoDB Connection Details:');
+    console.error('Error Code:', err.code);
+    console.error('Error Message:', err.message);
+    return errorResponse(res, 'Database connection error. Please try again later.', 500);
+  }
 
   // Mongoose validation error
   if (err.name === 'ValidationError') {

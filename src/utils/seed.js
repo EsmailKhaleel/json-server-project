@@ -3,11 +3,12 @@ const Product = require('../models/product.model');
 const Review = require('../models/review.model');
 const products = require('../../db.json').products;
 const reviews = require('../../reviews.json').reviews;
+require('dotenv').config();
 
 const seedProducts = async () => {
   try {
     // Connect to MongoDB
-    await mongoose.connect("mongodb+srv://esmailkhaleel27:rf6pm9EE6IqIygHV@first-cluster.u3asc0s.mongodb.net/?retryWrites=true&w=majority&appName=first-cluster");
+    await mongoose.connect(process.env.MONGODB_URI);
     console.log('Connected to MongoDB');
 
     // Clear existing reviews
