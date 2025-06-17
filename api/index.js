@@ -11,10 +11,24 @@ const authRoutes = require('../src/routes/auth.routes');
 const orderRoutes = require('../src/routes/order.routes');
 const { errorHandler, notFound } = require('../src/middleware/error.middleware');
 
-// Connect to MongoDB
-connectDB();
-
 const app = express();
+
+// Middleware to ensure database connection
+const ensureDbConnected = async (req, res, next) => {
+  try {
+    if (!global.mongoConnected) {
+      await connectDB();
+      global.mongoConnected = true;
+    }
+    next();
+  } catch (error) {
+    console.error('Database connection error:', error);
+    res.status(500).json({ 
+      status: false, 
+      message: 'Database connection failed' 
+    });
+  }
+};
 
 // Middleware
 app.use(cors());
@@ -26,12 +40,17 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), require('../
 // Body parser middleware - after Stripe webhook
 app.use(express.json());
 
-// API routes
-app.use('/api/auth', authRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/reviews', reviewRoutes);
-app.use('/api/stripe', stripeRoutes);
-app.use('/api/orders', orderRoutes);
+// Health check endpoint that doesn't require DB connection
+app.get('/api/health', (req, res) => {
+  res.json({ status: true, message: 'Server is running' });
+});
+
+// API routes with DB connection check
+app.use('/api/auth', ensureDbConnected, authRoutes);
+app.use('/api/products', ensureDbConnected, productRoutes);
+app.use('/api/reviews', ensureDbConnected, reviewRoutes);
+app.use('/api/stripe', ensureDbConnected, stripeRoutes);
+app.use('/api/orders', ensureDbConnected, orderRoutes);
 
 // Handle 404 errors for unmatched routes
 app.use(notFound);
