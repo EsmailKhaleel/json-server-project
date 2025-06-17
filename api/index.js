@@ -1,15 +1,86 @@
-const app = require('../src/app');
+const express = require('express');
+const cors = require('cors');
+const morgan = require('morgan');
+require('dotenv').config();
 
-const PORT = process.env.PORT || 3000;
+const connectDB = require('../src/config/db.config');
+const productRoutes = require('../src/routes/product.routes');
+const stripeRoutes = require('../src/routes/stripe.routes');
+const reviewRoutes = require('../src/routes/review.routes');
+const authRoutes = require('../src/routes/auth.routes');
+const orderRoutes = require('../src/routes/order.routes');
+const { errorHandler, notFound } = require('../src/middleware/error.middleware');
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log(`Products API endpoints:`);
-  console.log(`GET    http://localhost:${PORT}/api/products`);
-  console.log(`GET    http://localhost:${PORT}/api/products/:id`);
-  console.log(`POST   http://localhost:${PORT}/api/products`);
-  console.log(`PUT    http://localhost:${PORT}/api/products/:id`);
-  console.log(`DELETE http://localhost:${PORT}/api/products/:id`);
-  console.log(`GET    http://localhost:${PORT}/api/products/categories`);
-  console.log(`Stripe payment endpoint is available at http://localhost:${PORT}/api/create-checkout-session`);
-}); 
+// Connect to MongoDB
+connectDB();
+
+const app = express();
+
+// Middleware
+app.use(cors());
+app.use(morgan('dev'));
+
+// Important: Parse Stripe webhook payload before any other body parsers
+app.post('/api/webhook', express.raw({ type: 'application/json' }), require('../src/controllers/stripe.controller').handleWebhook);
+
+// Body parser middleware - after Stripe webhook
+app.use(express.json());
+
+// API routes
+app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/stripe', stripeRoutes);
+app.use('/api/orders', orderRoutes);
+
+// Handle 404 errors for unmatched routes
+app.use(notFound);
+
+// Handle all other errors
+app.use(errorHandler);
+
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+    console.log('\nAPI Endpoints:');
+    
+    console.log('\nAuthentication Endpoints:');
+    console.log(`POST   http://localhost:${PORT}/api/auth/register        - Register user`);
+    console.log(`POST   http://localhost:${PORT}/api/auth/login          - Login user`);
+    console.log(`GET    http://localhost:${PORT}/api/auth/me             - Get current user`);
+    console.log(`PUT    http://localhost:${PORT}/api/auth/updatedetails  - Update user details`);
+    console.log(`PUT    http://localhost:${PORT}/api/auth/updatepassword - Update password`);
+    console.log(`GET    http://localhost:${PORT}/api/auth/cart           - Get cart`);
+    console.log(`POST   http://localhost:${PORT}/api/auth/cart           - Add to cart`);
+    console.log(`DELETE http://localhost:${PORT}/api/auth/cart/:productId- Remove from cart`);
+    console.log(`DELETE http://localhost:${PORT}/api/auth/cart           - Clear cart`);
+    console.log(`GET    http://localhost:${PORT}/api/auth/wishlist       - Get wishlist`);
+    console.log(`POST   http://localhost:${PORT}/api/auth/wishlist       - Toggle wishlist`);
+    console.log(`DELETE http://localhost:${PORT}/api/auth/wishlist       - Clear wishlist`);
+    
+    console.log('\nProduct Endpoints:');
+    console.log(`GET    http://localhost:${PORT}/api/products              - Get all products`);
+    console.log(`GET    http://localhost:${PORT}/api/products/:id          - Get single product`);
+    console.log(`POST   http://localhost:${PORT}/api/products              - Create product`);
+    console.log(`PUT    http://localhost:${PORT}/api/products/:id          - Update product`);
+    console.log(`DELETE http://localhost:${PORT}/api/products/:id          - Delete product`);
+    console.log(`GET    http://localhost:${PORT}/api/products/categories   - Get categories`);
+    
+    console.log('\nReview Endpoints:');
+    console.log(`GET    http://localhost:${PORT}/api/reviews              - Get all reviews`);
+    console.log(`GET    http://localhost:${PORT}/api/reviews?productId=ID - Get product reviews`);
+    console.log(`GET    http://localhost:${PORT}/api/reviews/product/:productId/rating - Get product rating`);
+    console.log(`POST   http://localhost:${PORT}/api/reviews              - Create review`);
+    console.log(`PUT    http://localhost:${PORT}/api/reviews/:id          - Update review`);
+    console.log(`DELETE http://localhost:${PORT}/api/reviews/:id          - Delete review`);
+    
+    console.log('\nPayment Endpoints:');
+    console.log(`POST   http://localhost:${PORT}/api/stripe/create-checkout-session - Create payment session`);
+    console.log(`POST   http://localhost:${PORT}/api/webhook               - Stripe webhook endpoint`);
+  });
+}
+
+// Export the Express app for serverless use
+module.exports = app;

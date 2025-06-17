@@ -1,83 +1,65 @@
-const { readDB, writeDB } = require('../utils/db.utils');
+const Product = require('../models/product.model');
 
-const getAllProducts = (req, res, next) => {
+const getAllProducts = async (req, res, next) => {
   try {
-    const db = readDB();
     const { category, _sort, _order, q, page, limit, minPrice, maxPrice } = req.query;
     
-    let products = [...db.products];
-
+    // Build query
+    const query = {};
+    
     // Handle search query
     if (q) {
-      const searchTerms = q.toLowerCase().trim().split(/\s+/);
-      products = products.filter(product => {
-        const productName = product.name.toLowerCase();
-        const productDescription = product.description.toLowerCase();
-        
-        return searchTerms.every(term => 
-          productName.includes(term) || 
-          productDescription.includes(term)
-        );
-      });
+      query.$text = { $search: q };
     }
 
     // Handle category filter
     if (category) {
-      products = products.filter(product => product.category === category);
+      query.category = category;
     }
 
     // Handle price range filter
-    if (minPrice) {
-      const minPriceNum = parseFloat(minPrice);
-      products = products.filter(product => product.price >= minPriceNum);
-    }
-    
-    if (maxPrice) {
-      const maxPriceNum = parseFloat(maxPrice);
-      products = products.filter(product => product.price <= maxPriceNum);
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = parseFloat(minPrice);
+      if (maxPrice) query.price.$lte = parseFloat(maxPrice);
     }
 
-    // Handle sorting
+    // Build sort options
+    const sortOptions = {};
     if (_sort) {
-      products.sort((a, b) => {
-        if (_order === 'desc') {
-          return b[_sort] - a[_sort];
-        }
-        return a[_sort] - b[_sort];
-      });
+      sortOptions[_sort] = _order === 'desc' ? -1 : 1;
     }
 
     // Handle pagination
-    if (page && limit) {
-      const pageNumber = parseInt(page);
-      const limitNumber = parseInt(limit);
-      const startIndex = (pageNumber - 1) * limitNumber;
-      const endIndex = pageNumber * limitNumber;
-      
-      const paginatedProducts = products.slice(startIndex, endIndex);
-      
-      return res.json({
-        products: paginatedProducts,
-        total: products.length,
-        page: pageNumber,
-        limit: limitNumber,
-        totalPages: Math.ceil(products.length / limitNumber)
-      });
-    }
+    const pageNumber = parseInt(page) || 1;
+    const limitNumber = parseInt(limit) || 10;
+    const skip = (pageNumber - 1) * limitNumber;
 
-    res.json({ 
-      products, 
+    // Execute query with pagination
+    const [products, total] = await Promise.all([
+      Product.find(query)
+        .sort(sortOptions)
+        .skip(skip)
+        .limit(limitNumber),
+      Product.countDocuments(query)
+    ]);
+
+    res.json({
+      products,
+      total,
+      page: pageNumber,
+      limit: limitNumber,
+      totalPages: Math.ceil(total / limitNumber)
     });
   } catch (error) {
     next(error);
   }
 };
 
-const getProductById = (req, res, next) => {
+const getProductById = async (req, res, next) => {
   try {
-    const db = readDB();
-    const product = db.products.find(p => p.id === req.params.id);
-
+    const product = await Product.findById(req.params.id);
+    
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
@@ -88,56 +70,42 @@ const getProductById = (req, res, next) => {
   }
 };
 
-const createProduct = (req, res, next) => {
+const createProduct = async (req, res, next) => {
   try {
-    const db = readDB();
-    const newProduct = {
-      ...req.body,
-      id: Math.random().toString(36).substring(2, 9)
-    };
-
-    db.products.push(newProduct);
-    writeDB(db);
-
-    res.status(201).json(newProduct);
+    const newProduct = new Product(req.body);
+    const savedProduct = await newProduct.save();
+    
+    res.status(201).json(savedProduct);
   } catch (error) {
     next(error);
   }
 };
 
-const updateProduct = (req, res, next) => {
+const updateProduct = async (req, res, next) => {
   try {
-    const db = readDB();
-    const index = db.products.findIndex(p => p.id === req.params.id);
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
 
-    if (index === -1) {
+    if (!updatedProduct) {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    db.products[index] = {
-      ...db.products[index],
-      ...req.body,
-      id: req.params.id
-    };
-
-    writeDB(db);
-    res.json(db.products[index]);
+    res.json(updatedProduct);
   } catch (error) {
     next(error);
   }
 };
 
-const deleteProduct = (req, res, next) => {
+const deleteProduct = async (req, res, next) => {
   try {
-    const db = readDB();
-    const index = db.products.findIndex(p => p.id === req.params.id);
+    const deletedProduct = await Product.findByIdAndDelete(req.params.id);
 
-    if (index === -1) {
+    if (!deletedProduct) {
       return res.status(404).json({ error: 'Product not found' });
     }
-
-    db.products.splice(index, 1);
-    writeDB(db);
 
     res.status(204).send();
   } catch (error) {
@@ -145,10 +113,9 @@ const deleteProduct = (req, res, next) => {
   }
 };
 
-const getAllCategories = (req, res, next) => {
+const getAllCategories = async (req, res, next) => {
   try {
-    const db = readDB();
-    const categories = [...new Set(db.products.map(product => product.category))];
+    const categories = await Product.distinct('category');
     res.json({ categories });
   } catch (error) {
     next(error);

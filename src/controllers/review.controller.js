@@ -1,27 +1,44 @@
-const { readReviewsDB, writeReviewsDB } = require('../utils/reviews.utils');
-const { readDB } = require('../utils/db.utils');
+const Review = require('../models/review.model');
+const Product = require('../models/product.model');
+const mongoose = require('mongoose');
 
-const getAllReviews = (req, res, next) => {
+const getAllReviews = async (req, res, next) => {
   try {
     const { productId } = req.query;
-    const db = readReviewsDB();
     
-    let reviews = [...db.reviews];
-
+    const query = {};
     if (productId) {
-      reviews = reviews.filter(review => review.productId === productId);
+      // First try to find product by originalId
+      const product = await Product.findOne({ originalId: productId });
+      if (product) {
+        query.productId = product._id;
+      } else {
+        // If not found by originalId, try MongoDB ObjectId
+        if (mongoose.Types.ObjectId.isValid(productId)) {
+          query.productId = productId;
+        } else {
+          return res.status(404).json({ error: 'Product not found' });
+        }
+      }
     }
 
-    // Sort reviews by date (newest first)
-    reviews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const reviews = await Review.find(query)
+      .sort({ createdAt: -1 })
+      .populate('productId', 'name originalId'); // Populate product details
 
-    res.json({ reviews });
+    res.json({ 
+      reviews: reviews.map(review => ({
+        ...review.toObject(),
+        productId: review.productId.originalId, // Return the original product ID
+        productName: review.productId.name
+      }))
+    });
   } catch (error) {
     next(error);
   }
 };
 
-const createReview = (req, res, next) => {
+const createReview = async (req, res, next) => {
   try {
     const { productId, rating, comment, userName } = req.body;
 
@@ -35,77 +52,80 @@ const createReview = (req, res, next) => {
       return res.status(400).json({ error: 'Rating must be between 1 and 5' });
     }
 
-    // Check if product exists
-    const productsDB = readDB();
-    const product = productsDB.products.find(p => p.id === productId);
+    // Find product by originalId first, then by MongoDB ObjectId
+    let product = await Product.findOne({ originalId: productId });
+    if (!product && mongoose.Types.ObjectId.isValid(productId)) {
+      product = await Product.findById(productId);
+    }
+
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    const db = readReviewsDB();
-    const newReview = {
-      id: Math.random().toString(36).substring(2, 9),
-      productId,
+    const newReview = new Review({
+      productId: product._id,
       rating,
       comment: comment || '',
       userName,
-      createdAt: new Date().toISOString()
-    };
+      id: new mongoose.Types.ObjectId().toString() // Generate a unique ID for the review
+    });
 
-    db.reviews.push(newReview);
-    writeReviewsDB(db);
-
-    res.status(201).json(newReview);
+    const savedReview = await newReview.save();
+    
+    // Populate product details in the response
+    await savedReview.populate('productId', 'name originalId');
+    
+    res.status(201).json({
+      ...savedReview.toObject(),
+      productId: savedReview.productId.originalId,
+      productName: savedReview.productId.name
+    });
   } catch (error) {
+    if (error.code === 11000) {
+      return res.status(400).json({ error: 'You have already reviewed this product' });
+    }
     next(error);
   }
 };
 
-const updateReview = (req, res, next) => {
+const updateReview = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { rating, comment } = req.body;
-
-    const db = readReviewsDB();
-    const reviewIndex = db.reviews.findIndex(r => r.id === id);
-
-    if (reviewIndex === -1) {
-      return res.status(404).json({ error: 'Review not found' });
-    }
 
     // Validate rating range if provided
     if (rating && (rating < 1 || rating > 5)) {
       return res.status(400).json({ error: 'Rating must be between 1 and 5' });
     }
 
-    const updatedReview = {
-      ...db.reviews[reviewIndex],
-      ...(rating && { rating }),
-      ...(comment && { comment }),
-      updatedAt: new Date().toISOString()
-    };
+    const updatedReview = await Review.findOneAndUpdate(
+      { id }, // Use the string ID for finding the review
+      { rating, comment },
+      { new: true, runValidators: true }
+    ).populate('productId', 'name originalId');
 
-    db.reviews[reviewIndex] = updatedReview;
-    writeReviewsDB(db);
+    if (!updatedReview) {
+      return res.status(404).json({ error: 'Review not found' });
+    }
 
-    res.json(updatedReview);
+    res.json({
+      ...updatedReview.toObject(),
+      productId: updatedReview.productId.originalId,
+      productName: updatedReview.productId.name
+    });
   } catch (error) {
     next(error);
   }
 };
 
-const deleteReview = (req, res, next) => {
+const deleteReview = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const db = readReviewsDB();
-    const reviewIndex = db.reviews.findIndex(r => r.id === id);
+    const deletedReview = await Review.findOneAndDelete({ id }); // Use the string ID
 
-    if (reviewIndex === -1) {
+    if (!deletedReview) {
       return res.status(404).json({ error: 'Review not found' });
     }
-
-    db.reviews.splice(reviewIndex, 1);
-    writeReviewsDB(db);
 
     res.status(204).send();
   } catch (error) {
@@ -113,26 +133,37 @@ const deleteReview = (req, res, next) => {
   }
 };
 
-const getProductAverageRating = (req, res, next) => {
+const getProductAverageRating = async (req, res, next) => {
   try {
     const { productId } = req.params;
-    const db = readReviewsDB();
-    
-    const productReviews = db.reviews.filter(review => review.productId === productId);
-    
-    if (productReviews.length === 0) {
-      return res.json({ 
-        averageRating: 0,
-        totalReviews: 0
-      });
+
+    // Find product by originalId first, then by MongoDB ObjectId
+    let product = await Product.findOne({ originalId: productId });
+    if (!product && mongoose.Types.ObjectId.isValid(productId)) {
+      product = await Product.findById(productId);
     }
 
-    const totalRating = productReviews.reduce((sum, review) => sum + review.rating, 0);
-    const averageRating = totalRating / productReviews.length;
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    const result = await Review.aggregate([
+      { $match: { productId: product._id } },
+      { 
+        $group: { 
+          _id: '$productId',
+          averageRating: { $avg: '$rating' },
+          numberOfReviews: { $sum: 1 }
+        } 
+      }
+    ]);
+
+    const rating = result[0] || { averageRating: 0, numberOfReviews: 0 };
 
     res.json({
-      averageRating: parseFloat(averageRating.toFixed(1)),
-      totalReviews: productReviews.length
+      productId: product.originalId,
+      averageRating: Math.round(rating.averageRating * 10) / 10,
+      numberOfReviews: rating.numberOfReviews
     });
   } catch (error) {
     next(error);
@@ -145,4 +176,4 @@ module.exports = {
   updateReview,
   deleteReview,
   getProductAverageRating
-}; 
+};
