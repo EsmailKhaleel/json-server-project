@@ -52,18 +52,16 @@ const productSchema = new mongoose.Schema({
     virtuals: true, // Include virtual properties when document is converted to JSON
     transform: function(doc, ret) {
       ret.id = ret._id; // Copy _id to id
-      delete ret._id; // Remove _id
       delete ret.__v; // Remove version key
       return ret;
     }
   },
-  toObject: { virtuals: true } // Include virtuals when document is converted to object
 });
 
-// Virtual for id (alternative approach if you don't want to use transform)
-productSchema.virtual('id').get(function() {
-  return this._id;
-});
+// // Virtual for id (alternative approach if you don't want to use transform)
+// productSchema.virtual('id').get(function() {
+//   return this._id;
+// });
 
 // Add text index for search functionality
 productSchema.index({ name: 'text', description: 'text' });

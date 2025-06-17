@@ -1,6 +1,23 @@
 const User = require('../models/user.model');
 const Product = require('../models/product.model');
 const { successResponse, errorResponse } = require('../utils/response.utils');
+const cloudinary = require('../config/cloudinary');
+const multer = require('multer');
+
+// Configure multer for memory storage
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Not an image! Please upload only images.'), false);
+    }
+  },
+}).single('image');
 
 // @desc    Register user
 // @route   POST /api/auth/register
@@ -284,6 +301,47 @@ exports.getWishlist = async (req, res, next) => {
     const user = await User.findById(req.user.id).populate('wishlist');
     return successResponse(res, {
       wishlist: user.wishlist
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Upload user profile image
+// @route   POST /api/auth/upload-image
+exports.uploadImage = async (req, res, next) => {
+  try {
+    upload(req, res, async (err) => {
+      if (err) {
+        return errorResponse(res, err.message, 400);
+      }
+
+      if (!req.file) {
+        return errorResponse(res, 'Please upload an image file', 400);
+      }
+
+      // Convert buffer to base64
+      const b64 = Buffer.from(req.file.buffer).toString('base64');
+      const dataURI = `data:${req.file.mimetype};base64,${b64}`;
+
+      // Upload to Cloudinary
+      const result = await cloudinary.uploader.upload(dataURI, {
+        folder: 'user_profiles',
+        resource_type: 'auto'
+      });
+
+      // Update user's image URL
+      const user = await User.findByIdAndUpdate(
+        req.user.id,
+        { image: result.secure_url },
+        { new: true }
+      );
+
+      return successResponse(res, {
+        message: 'Image uploaded successfully',
+        image: result.secure_url,
+        user
+      });
     });
   } catch (error) {
     next(error);

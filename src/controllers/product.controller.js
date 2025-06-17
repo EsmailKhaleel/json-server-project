@@ -41,7 +41,6 @@ const getAllProducts = async (req, res, next) => {
     // Execute query with pagination and timeout
     const [products, total] = await Promise.all([
       Product.find(query)
-        .lean() // Use lean() for better performance
         .sort(sortOptions)
         .skip(skip)
         .limit(limitNumber)

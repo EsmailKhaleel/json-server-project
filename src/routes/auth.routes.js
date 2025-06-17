@@ -12,7 +12,8 @@ const {
   clearCart,
   getWishlist,
   toggleWishlist,
-  clearWishlist
+  clearWishlist,
+  uploadImage
 } = require('../controllers/auth.controller');
 const { protect } = require('../middleware/auth.middleware');
 
@@ -26,6 +27,7 @@ router.use(protect);
 router.get('/me', getMe);
 router.put('/updatedetails', updateDetails);
 router.put('/updatepassword', updatePassword);
+router.post('/upload-image', uploadImage);
 
 // Cart routes
 router.get('/cart', getCart);

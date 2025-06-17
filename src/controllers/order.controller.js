@@ -1,5 +1,5 @@
 const Order = require('../models/order.model');
-const { successResponse } = require('../utils/response.utils');
+const { successResponse, errorResponse } = require('../utils/response.utils');
 
 const getUserOrders = async (req, res, next) => {
   try {
@@ -57,12 +57,15 @@ const updateOrderStatus = async (req, res, next) => {
 
 const getLatestOrder = async (req, res, next) => {
   try {
+    if (!req.user || !req.user._id) {
+      return errorResponse(res, 'User not authenticated', 401);
+    }
     const order = await Order.findOne({ 
       userId: req.user._id 
     }).sort({ createdAt: -1 });
     
     if (!order) {
-      return res.status(404).json({ error: 'No orders found for this user' });
+      return errorResponse(res, 'No orders found for this user', 404);
     }
 
     return successResponse(res, { order }, 200);
