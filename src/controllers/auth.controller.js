@@ -8,7 +8,7 @@ const multer = require('multer');
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
+    fileSize: 5 * 1024 * 1024,
   },
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith('image/')) {
@@ -19,8 +19,7 @@ const upload = multer({
   },
 }).single('image');
 
-// @desc    Register user
-// @route   POST /api/auth/register
+// Register user
 exports.register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
@@ -54,8 +53,7 @@ exports.register = async (req, res, next) => {
   }
 };
 
-// @desc    Login user
-// @route   POST /api/auth/login
+// Login user
 exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -92,9 +90,11 @@ exports.login = async (req, res, next) => {
   }
 };
 
-// @desc    Get current logged in user
-// @route   GET /api/auth/me
+// Get current logged in user
 exports.getMe = async (req, res, next) => {
+  if (!req.user) {
+    return errorResponse(res, 'Not authenticated', 401);
+  }
   try {
     const user = await User.findById(req.user.id);
     return successResponse(res, { user });
@@ -103,8 +103,7 @@ exports.getMe = async (req, res, next) => {
   }
 };
 
-// @desc    Update user details
-// @route   PUT /api/auth/updatedetails
+// Update user details
 exports.updateDetails = async (req, res, next) => {
   try {
     const fieldsToUpdate = {
@@ -123,8 +122,7 @@ exports.updateDetails = async (req, res, next) => {
   }
 };
 
-// @desc    Update password
-// @route   PUT /api/auth/updatepassword
+// Update password
 exports.updatePassword = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id).select('+password');
@@ -150,8 +148,7 @@ exports.updatePassword = async (req, res, next) => {
   }
 };
 
-// @desc    Add product to cart
-// @route   POST /api/auth/cart
+// Add product to cart
 exports.addToCart = async (req, res, next) => {
   try {
     const { productId, quantity } = req.body;
@@ -191,8 +188,7 @@ exports.addToCart = async (req, res, next) => {
   }
 };
 
-// @desc    Remove product from cart
-// @route   DELETE /api/auth/cart/:productId
+// Remove product from cart
 exports.removeFromCart = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id);
@@ -211,8 +207,7 @@ exports.removeFromCart = async (req, res, next) => {
   }
 };
 
-// @desc    Add/Remove product to/from wishlist
-// @route   POST /api/auth/wishlist
+// Add/Remove product to/from wishlist
 exports.toggleWishlist = async (req, res, next) => {
   try {
     const { productId } = req.body;
@@ -247,8 +242,7 @@ exports.toggleWishlist = async (req, res, next) => {
   }
 };
 
-// @desc    Clear all items from cart
-// @route   DELETE /api/auth/cart
+// Clear all items from cart
 exports.clearCart = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id);
@@ -264,8 +258,7 @@ exports.clearCart = async (req, res, next) => {
   }
 };
 
-// @desc    Clear all items from wishlist
-// @route   DELETE /api/auth/wishlist
+// Clear all items from wishlist
 exports.clearWishlist = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id);
@@ -281,8 +274,7 @@ exports.clearWishlist = async (req, res, next) => {
   }
 };
 
-// @desc    Get current user's cart
-// @route   GET /api/auth/cart
+// Get current user's cart
 exports.getCart = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id).populate('cart.product');
@@ -294,8 +286,7 @@ exports.getCart = async (req, res, next) => {
   }
 };
 
-// @desc    Get current user's wishlist
-// @route   GET /api/auth/wishlist
+// Get current user's wishlist
 exports.getWishlist = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id).populate('wishlist');
@@ -307,8 +298,7 @@ exports.getWishlist = async (req, res, next) => {
   }
 };
 
-// @desc    Upload user profile image
-// @route   POST /api/auth/upload-image
+// Upload user profile image
 exports.uploadImage = async (req, res, next) => {
   try {
     upload(req, res, async (err) => {

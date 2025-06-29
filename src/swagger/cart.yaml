@@ -1,0 +1,218 @@
+# Cart Routes Documentation
+paths:
+  /api/cart:
+    get:
+      tags:
+        - Cart
+      summary: Get user's cart
+      description: Retrieve the current user's cart items
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Cart retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  cart:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CartItem'
+                  totalItems:
+                    type: integer
+                    description: Total number of items in cart
+                  totalAmount:
+                    type: number
+                    description: Total amount of cart
+                  statusCode:
+                    type: integer
+                    example: 200
+        '401':
+          description: Unauthorized - authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      tags:
+        - Cart
+      summary: Add item to cart
+      description: Add a product to the user's cart
+      security:
+        - BearerAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/AddToCartRequest'
+      responses:
+        '200':
+          description: Item added to cart successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Item added to cart successfully"
+                  cart:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CartItem'
+                  statusCode:
+                    type: integer
+                    example: 200
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized - authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - Cart
+      summary: Update cart item quantity
+      description: Update the quantity of an item in the cart
+      security:
+        - BearerAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateCartRequest'
+      responses:
+        '200':
+          description: Cart item updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Cart item updated successfully"
+                  cart:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CartItem'
+                  statusCode:
+                    type: integer
+                    example: 200
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized - authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Cart item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Cart
+      summary: Clear cart
+      description: Remove all items from the user's cart
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Cart cleared successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Cart cleared successfully"
+                  statusCode:
+                    type: integer
+                    example: 200
+        '401':
+          description: Unauthorized - authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/cart/{productId}:
+    delete:
+      tags:
+        - Cart
+      summary: Remove item from cart
+      description: Remove a specific product from the user's cart
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: Product ID to remove from cart
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Item removed from cart successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Item removed from cart successfully"
+                  cart:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CartItem'
+                  statusCode:
+                    type: integer
+                    example: 200
+        '401':
+          description: Unauthorized - authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Cart item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error' 

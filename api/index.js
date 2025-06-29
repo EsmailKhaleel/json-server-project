@@ -3,6 +3,8 @@ const cors = require('cors');
 const morgan = require('morgan');
 require('dotenv').config();
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('../src/swagger/swagger');
 const connectDB = require('../src/config/db.config');
 const productRoutes = require('../src/routes/product.routes');
 const stripeRoutes = require('../src/routes/stripe.routes');
@@ -37,22 +39,16 @@ app.use(morgan('dev'));
 // Important: Parse Stripe webhook payload before any other body parsers
 app.post('/api/webhook', express.raw({ type: 'application/json' }), require('../src/controllers/stripe.controller').handleWebhook);
 
-// Body parser middleware - after Stripe webhook
+// Body parser middleware
 app.use(express.json());
 
-// Serve static files from public directory
-app.use(express.static('public'));
 
-// Welcome page at root endpoint
-// app.get('/', (req, res) => {
-//   res.sendFile('index.html', { root: './public' });
-// });
-
-
-// Health check endpoint that doesn't require DB connection
-app.get('/api/health', (req, res) => {
-  res.json({ status: true, message: 'Server is running' });
+// Serve API documentation at root endpoint
+app.get('/', (req, res) => {
+  res.redirect('/api/docs');
 });
+
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // API routes with DB connection check
 app.use('/api/auth', ensureDbConnected, authRoutes);
@@ -69,42 +65,8 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log('\nAPI Endpoints:');
-
-  console.log('\nAuthentication Endpoints:');
-  console.log(`POST   http://localhost:${PORT}/api/auth/register        - Register user`);
-  console.log(`POST   http://localhost:${PORT}/api/auth/login          - Login user`);
-  console.log(`GET    http://localhost:${PORT}/api/auth/me             - Get current user`);
-  console.log(`PUT    http://localhost:${PORT}/api/auth/updatedetails  - Update user details`);
-  console.log(`PUT    http://localhost:${PORT}/api/auth/updatepassword - Update password`);
-  console.log(`GET    http://localhost:${PORT}/api/auth/cart           - Get cart`);
-  console.log(`POST   http://localhost:${PORT}/api/auth/cart           - Add to cart`);
-  console.log(`DELETE http://localhost:${PORT}/api/auth/cart/:productId- Remove from cart`);
-  console.log(`DELETE http://localhost:${PORT}/api/auth/cart           - Clear cart`);
-  console.log(`GET    http://localhost:${PORT}/api/auth/wishlist       - Get wishlist`);
-  console.log(`POST   http://localhost:${PORT}/api/auth/wishlist       - Toggle wishlist`);
-  console.log(`DELETE http://localhost:${PORT}/api/auth/wishlist       - Clear wishlist`);
-
-  console.log('\nProduct Endpoints:');
-  console.log(`GET    http://localhost:${PORT}/api/products              - Get all products`);
-  console.log(`GET    http://localhost:${PORT}/api/products/:id          - Get single product`);
-  console.log(`POST   http://localhost:${PORT}/api/products              - Create product`);
-  console.log(`PUT    http://localhost:${PORT}/api/products/:id          - Update product`);
-  console.log(`DELETE http://localhost:${PORT}/api/products/:id          - Delete product`);
-  console.log(`GET    http://localhost:${PORT}/api/products/categories   - Get categories`);
-
-  console.log('\nReview Endpoints:');
-  console.log(`GET    http://localhost:${PORT}/api/reviews              - Get all reviews`);
-  console.log(`GET    http://localhost:${PORT}/api/reviews?productId=ID - Get product reviews`);
-  console.log(`GET    http://localhost:${PORT}/api/reviews/product/:productId/rating - Get product rating`);
-  console.log(`POST   http://localhost:${PORT}/api/reviews              - Create review`);
-  console.log(`PUT    http://localhost:${PORT}/api/reviews/:id          - Update review`);
-  console.log(`DELETE http://localhost:${PORT}/api/reviews/:id          - Delete review`);
-
-  console.log('\nPayment Endpoints:');
-  console.log(`POST   http://localhost:${PORT}/api/stripe/create-checkout-session - Create payment session`);
-  console.log(`POST   http://localhost:${PORT}/api/webhook               - Stripe webhook endpoint`);
+  console.log(`Server is running at http://localhost:${PORT}`);
+  console.log("Api docs at http://localhost:3000/api/docs");
 });
 
 // Export the Express app for serverless use

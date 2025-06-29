@@ -1,0 +1,461 @@
+openapi: 3.0.0
+info:
+  title: eCommerce API
+  version: 1.0.0
+  description: |
+    Backend REST API documentation for eCommerce application.
+    
+    ## Features
+    - User authentication and authorization
+    - Product management
+    - Shopping cart and wishlist
+    - Order management
+    - Product reviews and ratings
+    - Payment processing with Stripe
+    
+    ## Authentication
+    Most endpoints require authentication using Bearer token. Include the token in the Authorization header:
+    ```
+    Authorization: Bearer <your-jwt-token>
+    ```
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+  - url: http://json-server-project-khaki.vercel.app
+    description: Production server
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from login/register endpoints
+
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: User's unique identifier
+        name:
+          type: string
+          description: User's full name
+          minLength: 2
+        email:
+          type: string
+          format: email
+          description: User's email address
+        image:
+          type: string
+          description: User's profile image URL
+        role:
+          type: string
+          enum: [user, admin]
+          default: user
+          description: User's role in the system
+        cart:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+        wishlist:
+          type: array
+          items:
+            type: string
+            description: Product IDs in wishlist
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - name
+        - email
+
+    CartItem:
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/Product'
+        quantity:
+          type: integer
+          minimum: 1
+          default: 1
+
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Product's unique identifier
+        name:
+          type: string
+          description: Product name
+        description:
+          type: string
+          description: Product description
+        price:
+          type: number
+          minimum: 0
+          description: Current price
+        old_price:
+          type: number
+          minimum: 0
+          description: Original price before discount
+        discount:
+          type: number
+          minimum: 0
+          description: Discount percentage
+        category:
+          type: string
+          enum: [clothes, furniture, groceries, beauty, fragrances, digital]
+          description: Product category
+        image:
+          type: string
+          description: Main product image URL
+        images:
+          type: array
+          items:
+            type: string
+          description: Additional product images
+        averageRating:
+          type: number
+          minimum: 0
+          maximum: 5
+          description: Average product rating
+        numReviews:
+          type: integer
+          minimum: 0
+          description: Number of reviews
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - name
+        - description
+        - price
+        - category
+        - image
+
+    Review:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Review's unique identifier
+        user:
+          $ref: '#/components/schemas/User'
+        product:
+          type: string
+          description: Product ID
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: Rating from 1 to 5
+        comment:
+          type: string
+          description: Review comment
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - rating
+        - comment
+
+    Order:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Order's unique identifier
+        user:
+          type: string
+          description: User ID
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+        totalAmount:
+          type: number
+          description: Total order amount
+        status:
+          type: string
+          enum: [pending, processing, shipped, delivered, cancelled]
+          default: pending
+        shippingAddress:
+          type: object
+          properties:
+            street:
+              type: string
+            city:
+              type: string
+            state:
+              type: string
+            zipCode:
+              type: string
+            country:
+              type: string
+        paymentStatus:
+          type: string
+          enum: [pending, completed, failed]
+          default: pending
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          description: Error message
+        statusCode:
+          type: integer
+          description: HTTP status code
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          description: Response data
+        statusCode:
+          type: integer
+          description: HTTP status code
+
+  requestBodies:
+    RegisterRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                minLength: 2
+                example: "John Doe"
+              email:
+                type: string
+                format: email
+                example: "john@example.com"
+              password:
+                type: string
+                minLength: 6
+                example: "password123"
+            required:
+              - name
+              - email
+              - password
+
+    LoginRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                format: email
+                example: "john@example.com"
+              password:
+                type: string
+                example: "password123"
+            required:
+              - email
+              - password
+
+    UpdateUserRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                minLength: 2
+                example: "John Doe"
+              email:
+                type: string
+                format: email
+                example: "john@example.com"
+
+    UpdatePasswordRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              currentPassword:
+                type: string
+                example: "oldpassword123"
+              newPassword:
+                type: string
+                minLength: 6
+                example: "newpassword123"
+            required:
+              - currentPassword
+              - newPassword
+
+    ProductRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "Wireless Headphones"
+              description:
+                type: string
+                example: "High-quality wireless headphones with noise cancellation"
+              price:
+                type: number
+                minimum: 0
+                example: 99.99
+              old_price:
+                type: number
+                minimum: 0
+                example: 129.99
+              discount:
+                type: number
+                minimum: 0
+                example: 23
+              category:
+                type: string
+                enum: [clothes, furniture, groceries, beauty, fragrances, digital]
+                example: "digital"
+              image:
+                type: string
+                example: "https://example.com/image.jpg"
+              images:
+                type: array
+                items:
+                  type: string
+                example: ["https://example.com/image1.jpg", "https://example.com/image2.jpg"]
+            required:
+              - name
+              - description
+              - price
+              - category
+              - image
+
+    ReviewRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              productId:
+                type: string
+                example: "507f1f77bcf86cd799439011"
+              rating:
+                type: integer
+                minimum: 1
+                maximum: 5
+                example: 5
+              comment:
+                type: string
+                example: "Great product, highly recommended!"
+            required:
+              - productId
+              - rating
+              - comment
+
+    CartRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              productId:
+                type: string
+                example: "507f1f77bcf86cd799439011"
+              quantity:
+                type: integer
+                minimum: 1
+                default: 1
+                example: 2
+            required:
+              - productId
+
+    WishlistRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              productId:
+                type: string
+                example: "507f1f77bcf86cd799439011"
+            required:
+              - productId
+
+    StripeCheckoutRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              items:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    productId:
+                      type: string
+                      example: "507f1f77bcf86cd799439011"
+                    quantity:
+                      type: integer
+                      minimum: 1
+                      example: 2
+                example:
+                  - productId: "507f1f77bcf86cd799439011"
+                    quantity: 2
+                  - productId: "507f1f77bcf86cd799439012"
+                    quantity: 1
+            required:
+              - items
+
+tags:
+  - name: Authentication
+    description: User authentication and profile management
+  - name: Cart
+    description: Shopping cart operations
+  - name: Wishlist
+    description: User wishlist management
+  - name: Products
+    description: Product management and catalog
+  - name: Reviews
+    description: Product reviews and ratings
+  - name: Orders
+    description: Order management and tracking
+  - name: Payments
+    description: Payment processing with Stripe 
