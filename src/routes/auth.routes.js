@@ -3,6 +3,9 @@ const router = express.Router();
 const {
   register,
   login,
+  googleAuthURL,
+  googleCallback,
+  signOut,
   getMe,
   updateDetails,
   updatePassword,
@@ -20,6 +23,13 @@ const { protect } = require('../middleware/auth.middleware');
 // Public routes
 router.post('/register', register);
 router.post('/login', login);
+
+// Server-side Google OAuth routes
+router.get('/google/url', googleAuthURL);
+router.get('/google/callback', googleCallback);
+
+// Sign out route
+router.post('/signout', signOut);
 
 // Protected routes
 router.use(protect);

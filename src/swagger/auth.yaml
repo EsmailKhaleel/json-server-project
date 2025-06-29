@@ -74,6 +74,135 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /api/auth/google/url:
+    get:
+      tags:
+        - Authentication
+      summary: Get Google OAuth URL
+      description: Get the Google OAuth authorization URL for server-side authentication
+      responses:
+        '200':
+          description: Google OAuth URL generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  authUrl:
+                    type: string
+                    description: Google OAuth authorization URL
+                    example: "https://accounts.google.com/o/oauth2/auth?client_id=..."
+                  message:
+                    type: string
+                    example: "Google OAuth URL generated successfully"
+                  statusCode:
+                    type: integer
+                    example: 200
+
+  /api/auth/google/callback:
+    get:
+      tags:
+        - Authentication
+      summary: Google OAuth Callback
+      description: Handle Google OAuth callback and authenticate user
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Authorization code from Google OAuth
+      responses:
+        '302':
+          description: Redirect to frontend with authentication token
+          headers:
+            Location:
+              description: Redirect URL with token
+              schema:
+                type: string
+                example: "http://localhost:5173/auth/success?token=jwt_token&user=user_data"
+
+  /api/auth/google:
+    post:
+      tags:
+        - Authentication
+      summary: Google OAuth Sign In (Client-side)
+      description: Authenticate user using Google ID token (client-side flow)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+                  description: Google ID token from client-side authentication
+                  example: "eyJhbGciOiJSUzI1NiIsImtpZCI6IjFiYjM..."
+      responses:
+        '200':
+          description: Google sign-in successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  token:
+                    type: string
+                    description: JWT authentication token
+                  user:
+                    $ref: '#/components/schemas/User'
+                  message:
+                    type: string
+                    example: "Google sign-in successful"
+                  statusCode:
+                    type: integer
+                    example: 200
+        '400':
+          description: Bad request - missing Google token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized - invalid Google token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/signout:
+    post:
+      tags:
+        - Authentication
+      summary: Sign Out
+      description: Sign out user (client-side token removal)
+      responses:
+        '200':
+          description: Sign out successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Sign out successful. Please remove the token from client storage."
+                  statusCode:
+                    type: integer
+                    example: 200
+
   /api/auth/me:
     get:
       tags:

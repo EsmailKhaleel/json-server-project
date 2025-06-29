@@ -2,6 +2,11 @@ const User = require('../models/user.model');
 const Product = require('../models/product.model');
 const { successResponse, errorResponse } = require('../utils/response.utils');
 const cloudinary = require('../config/cloudinary');
+const { 
+  getGoogleAuthURL, 
+  getTokensFromCode, 
+  getGoogleUserInfo
+} = require('../config/google.config');
 const multer = require('multer');
 
 // Configure multer for memory storage
@@ -333,6 +338,99 @@ exports.uploadImage = async (req, res, next) => {
         user
       });
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Google OAuth - Step 1: Get authorization URL
+exports.googleAuthURL = async (req, res, next) => {
+  try {
+    const authUrl = getGoogleAuthURL();
+    return successResponse(
+      res,
+      { 
+        authUrl,
+        message: 'Google OAuth URL generated successfully'
+      }
+    );
+  } catch (error) {
+    console.error('Google auth URL error:', error);
+    return errorResponse(res, 'Failed to generate Google auth URL', 500);
+  }
+};
+
+// Google OAuth - Step 2: Handle callback and sign in
+exports.googleCallback = async (req, res, next) => {
+  try {
+    const { code } = req.query;
+
+    if (!code) {
+      return errorResponse(res, 'Authorization code is required', 400);
+    }
+
+    // Exchange authorization code for tokens
+    const tokens = await getTokensFromCode(code);
+    
+    // Get user info from Google
+    const googleUserInfo = await getGoogleUserInfo(tokens.access_token);
+
+    // Check if user already exists
+    let user = await User.findOne({ 
+      $or: [
+        { email: googleUserInfo.email },
+        { googleId: googleUserInfo.id }
+      ]
+    });
+
+    if (user) {
+      // Update user with Google data if they don't have googleId
+      if (!user.googleId) {
+        user.googleId = googleUserInfo.id;
+        user.image = googleUserInfo.picture || user.image;
+        await user.save();
+      }
+    } else {
+      // Create new user
+      console.log("The new google user:" + googleUserInfo);
+      user = await User.create({
+        name: googleUserInfo.name,
+        email: googleUserInfo.email,
+        googleId: googleUserInfo.id,
+        image: googleUserInfo.picture,
+        password: undefined // No password for Google OAuth users
+      });
+    }
+
+    // Generate JWT token
+    const authToken = user.generateAuthToken();
+
+    // Remove password from response
+    user.password = undefined;
+
+    // Redirect to frontend with token (you can customize this)
+    const frontendUrl = process.env.CLIENT_URL;
+    const redirectUrl = `${frontendUrl}/auth/success?token=${authToken}&user=${encodeURIComponent(JSON.stringify(user))}`;
+    
+    res.redirect(redirectUrl);
+
+  } catch (error) {
+    console.error('Google callback error:', error);
+    const frontendUrl = process.env.FRONTEND_URL;
+    const errorUrl = `${frontendUrl}/auth/error?message=${encodeURIComponent('Google sign-in failed')}`;
+    res.redirect(errorUrl);
+  }
+};
+
+// Sign Out (client-side token removal)
+exports.signOut = async (req, res, next) => {
+  try {
+    // Note: JWT tokens are stateless, so server-side logout is not possible
+    // The client should remove the token from storage
+    return successResponse(
+      res,
+      { message: 'Sign out successful. Please remove the token from client storage.' }
+    );
   } catch (error) {
     next(error);
   }

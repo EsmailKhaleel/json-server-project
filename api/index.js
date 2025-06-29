@@ -49,7 +49,6 @@ app.get('/api/health', (req, res) => {
     success: true,
     message: 'API is running',
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development',
     swaggerLoaded: !!swaggerSpec
   });
 });
@@ -72,7 +71,7 @@ app.get('/api/swagger.json', (req, res) => {
   }
 });
 
-// Serve Swagger UI with custom options for better Vercel compatibility
+// Serve Swagger UI with custom options
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
   customCss: '.swagger-ui .topbar { display: none }',
   customSiteTitle: "eCommerce API Documentation",

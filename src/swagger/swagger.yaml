@@ -48,6 +48,9 @@ components:
           type: string
           format: email
           description: User's email address
+        googleId:
+          type: string
+          description: Google OAuth ID (for Google sign-in users)
         image:
           type: string
           description: User's profile image URL
