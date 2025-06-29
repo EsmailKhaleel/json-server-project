@@ -42,13 +42,48 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), require('../
 // Body parser middleware
 app.use(express.json());
 
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  console.log('Health check endpoint called');
+  res.json({
+    success: true,
+    message: 'API is running',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+    swaggerLoaded: !!swaggerSpec
+  });
+});
 
 // Serve API documentation at root endpoint
 app.get('/', (req, res) => {
+  console.log('Root endpoint called, redirecting to docs');
   res.redirect('/api/docs');
 });
 
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// Serve raw swagger JSON for debugging
+app.get('/api/swagger.json', (req, res) => {
+  console.log('Swagger JSON endpoint called');
+  try {
+    res.setHeader('Content-Type', 'application/json');
+    res.json(swaggerSpec);
+  } catch (error) {
+    console.error('Error serving swagger JSON:', error);
+    res.status(500).json({ error: 'Failed to load swagger spec' });
+  }
+});
+
+// Serve Swagger UI with custom options for better Vercel compatibility
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: "eCommerce API Documentation",
+  swaggerOptions: {
+    persistAuthorization: true,
+    displayRequestDuration: true,
+    filter: true,
+    deepLinking: true,
+    tryItOutEnabled: true
+  }
+}));
 
 // API routes with DB connection check
 app.use('/api/auth', ensureDbConnected, authRoutes);
@@ -67,6 +102,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
   console.log("Api docs at http://localhost:3000/api/docs");
+  console.log("Swagger spec loaded:", !!swaggerSpec);
 });
 
 // Export the Express app for serverless use
