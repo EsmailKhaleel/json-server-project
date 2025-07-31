@@ -425,11 +425,9 @@ exports.googleCallback = async (req, res, next) => {
 // Sign Out (client-side token removal)
 exports.signOut = async (req, res, next) => {
   try {
-    // Note: JWT tokens are stateless, so server-side logout is not possible
-    // The client should remove the token from storage
     return successResponse(
       res,
-      { message: 'Sign out successful. Please remove the token from client storage.' }
+      { message: 'Sign out successful.' }
     );
   } catch (error) {
     next(error);

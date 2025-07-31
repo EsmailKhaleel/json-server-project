@@ -2,7 +2,7 @@ const Product = require('../models/product.model');
 
 const getAllProducts = async (req, res, next) => {
   try {
-    const { category, _sort, _order, q, page, limit, minPrice, maxPrice } = req.query;
+    const { category, _sort, _order, q, page, limit, minPrice, maxPrice, rating } = req.query;
     
     // Build query with lean() for better performance
     const query = {};
@@ -28,6 +28,12 @@ const getAllProducts = async (req, res, next) => {
     const sortOptions = {};
     if (_sort) {
       sortOptions[_sort] = _order === 'desc' ? -1 : 1;
+    }
+
+    // Handle rating filter
+    if (rating) {
+      // the rating filter is up to the rating value
+      query.averageRating = { $lte: parseFloat(rating) };
     }
 
     // Handle pagination
