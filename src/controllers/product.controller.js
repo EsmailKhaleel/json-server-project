@@ -133,7 +133,6 @@ const getAllCategories = async (req, res, next) => {
   }
 };
 
-const Product = require('../models/product.model');
 
 // Get all categories with their products
 const getProductsGroupedByCategory = async (req, res, next) => {
