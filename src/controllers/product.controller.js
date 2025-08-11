@@ -133,11 +133,35 @@ const getAllCategories = async (req, res, next) => {
   }
 };
 
+const Product = require('../models/product.model');
+
+// Get all categories with their products
+const getProductsGroupedByCategory = async (req, res, next) => {
+  try {
+    // Get distinct categories
+    const categories = await Product.distinct('category');
+
+    // Fetch products for each category in parallel
+    const productsByCategory = await Promise.all(
+      categories.map(async (category) => {
+        const products = await Product.find({ category }).lean();
+        return { category, products };
+      })
+    );
+
+    res.status(200).json({ categories: productsByCategory });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 module.exports = {
   getAllProducts,
   getProductById,
   createProduct,
   updateProduct,
   deleteProduct,
-  getAllCategories
+  getAllCategories,
+  getProductsGroupedByCategory
 }; 
